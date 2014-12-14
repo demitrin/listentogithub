@@ -7,15 +7,15 @@ Here's the shit that we gotta do.
 
 ### Basic functionality
 
-[ ] Make node server
-[ ] Connect to Github and get some sort of feed.
-[ ] Sounds with HowlerJS
-[ ] Visualization with D3
-[ ] Deploy to Heroku
+- [ ] Make node server
+- [ ] Connect to Github and get some sort of feed.
+- [ ] Sounds with HowlerJS
+- [ ] Visualization with D3
+- [ ] Deploy to Heroku
 
 ### Extensions
 
-[ ] Some shit with hardware. (Maybe lights that flash for every commit or some
+- [ ] Some shit with hardware. (Maybe lights that flash for every commit or some
 shit?
 
 
