@@ -7,7 +7,7 @@ Here's the shit that we gotta do.
 
 ### Basic functionality
 
-- [ ] Make node server
+- [x] Make node server
 - [ ] Connect to Github and get some sort of feed.
 - [ ] Sounds with HowlerJS
 - [ ] Visualization with D3
