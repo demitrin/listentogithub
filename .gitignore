@@ -1,1 +1,3 @@
 node_modules/
+setenvs.sh
+src/listentogithub/public/
