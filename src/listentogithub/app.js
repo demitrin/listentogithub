@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var github = require('octonode');
+var http = require('http');
 var io = require('socket.io')(http);
 
 var routes = require('./routes/index');
@@ -17,11 +18,16 @@ GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET, 
     GITHUB_UNAME = process.env.GITHUB_UNAME,
     GITHUB_PW = process.env.GITHUB_PW,
-    GITHUB_PAC = process.env.GITHUB_PAC
-
+    GITHUB_PAC = process.env.GITHUB_PAC,
     EVENTS_ENDPOINT = "https://api.github.com/events/";
 var client = github.client(GITHUB_PAC);
-var queryRate = 3600 * 1.0 / 5000
+var queryRate = (3600 * 1.0 / 5000) * 1000;
+var getGithubEvents = function() {
+    client.get('/events', {}, function(err, status, body, headers) {
+        console.log(body);
+    });
+};
+var interval = setInterval(getGithubEvents, queryRate);
 
 
 
