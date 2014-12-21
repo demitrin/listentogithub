@@ -4,6 +4,8 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var github = require('octonode');
+var io = require('socket.io')(http);
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -16,7 +18,12 @@ GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID,
     GITHUB_UNAME = process.env.GITHUB_UNAME,
     GITHUB_PW = process.env.GITHUB_PW,
     GITHUB_PAC = process.env.GITHUB_PAC
+
     EVENTS_ENDPOINT = "https://api.github.com/events/";
+var client = github.client(GITHUB_PAC);
+var queryRate = 3600 * 1.0 / 5000
+
+
 
 
 // view engine setup
