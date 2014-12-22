@@ -6,12 +6,16 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var github = require('octonode');
 var http = require('http');
-var io = require('socket.io')(http);
+var debug = require('debug')('listentogithub');
+
+var app = express();
+var server = http.Server(app);
+var io = require('socket.io')(server);
+
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
-var app = express();
 // Set Github client id and secret, as well as github account to use for
 // oauth,in environmental variables.
 GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID, 
@@ -27,7 +31,10 @@ var getGithubEvents = function() {
         console.log(body);
     });
 };
-var interval = setInterval(getGithubEvents, queryRate);
+/*var interval = setInterval(getGithubEvents, queryRate);*/
+io.on('connection', function(socket) {
+    console.log('a user connected');
+});
 
 
 
@@ -75,6 +82,12 @@ app.use(function(err, req, res, next) {
         message: err.message,
         error: {}
     });
+});
+
+app.set('port', process.env.PORT || 3000);
+
+server.listen(app.get('port'), function() {
+  debug('Express server listening on port ' + server.address().port);
 });
 
 
