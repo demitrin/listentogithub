@@ -26,13 +26,16 @@ GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID,
     EVENTS_ENDPOINT = "https://api.github.com/events/";
 var client = github.client(GITHUB_PAC);
 var queryRate = (3600 * 1.0 / 5000) * 1000;
+//var eventQueue = 
 var getGithubEvents = function() {
     client.get('/events', {}, function(err, status, body, headers) {
         console.log(body);
     });
 };
 /*var interval = setInterval(getGithubEvents, queryRate);*/
+
 io.on('connection', function(socket) {
+    socket
     console.log('a user connected');
 });
 
