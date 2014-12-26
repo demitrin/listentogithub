@@ -39,6 +39,13 @@ var getGithubEvents = function(cb) {
                 ret = { user: el.actor.login,
                         repository: el.repo.name,
                         commits: el.payload.size,
+                        commitMessages: (function(){
+                            return el.payload.commits.map(function(el, i, ar) {
+                                return { message: el.message,
+                                         url: el.url };
+
+                            });
+                        })()
                     };
                 return ret;
             });
@@ -52,11 +59,9 @@ var interval = setTimeout(getGithubEvents, queryRate);
 io.on('connection', function(socket) {
     console.log('a user connected');
     getGithubEvents(function(payload) {
-        socket.emit("github payload", payload);
+        socket.broadcast.emit("github payload", payload);
     });
 });
-
-
 
 
 // view engine setup
