@@ -27,16 +27,33 @@ GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID,
 var client = github.client(GITHUB_PAC);
 var queryRate = (3600 * 1.0 / 5000) * 1000;
 //var eventQueue = 
-var getGithubEvents = function() {
+
+var getGithubEvents = function(cb) {
+    /* 
+     * Callback function should do something with the payload.
+     */
     client.get('/events', {}, function(err, status, body, headers) {
-        console.log(body);
+        var out = body.filter(function filterCb(el, i, ar) {
+                return el.type == "PushEvent";
+            }).map(function mapCb(el, i, ar) {
+                ret = { user: el.actor.login,
+                        repository: el.repo.name,
+                        commits: el.payload.size,
+                    };
+                return ret;
+            });
+        if(cb) {
+            cb(out);
+        }
     });
 };
-/*var interval = setInterval(getGithubEvents, queryRate);*/
+var interval = setTimeout(getGithubEvents, queryRate);
 
 io.on('connection', function(socket) {
-    socket
     console.log('a user connected');
+    getGithubEvents(function(payload) {
+        socket.emit("github payload", payload);
+    });
 });
 
 
