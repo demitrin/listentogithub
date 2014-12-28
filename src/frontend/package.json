@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "d3": "^3.5.2",
+    "jquery-browserify": "^1.8.1",
     "socket.io-client": "^1.2.1"
   }
 }
