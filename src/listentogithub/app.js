@@ -25,7 +25,7 @@ GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID,
     EVENTS_ENDPOINT = "https://api.github.com/events/";
 var client = github.client(GITHUB_PAC);
 var queryRate = (3600 * 1.0 / 5000) * 1000;
-//var eventQueue = 
+var store = [];
 
 var getGithubEvents = function(cb) {
     /* 
@@ -37,6 +37,8 @@ var getGithubEvents = function(cb) {
             }).map(function mapCb(el, i, ar) {
                 ret = { user: el.actor.login,
                         repository: el.repo.name,
+                        id: el.id,
+                        time: el.created_at,
                         commits: el.payload.size,
                         commitMessages: (function(){
                             return el.payload.commits.map(function(el, i, ar) {
@@ -53,13 +55,34 @@ var getGithubEvents = function(cb) {
         }
     });
 };
-var interval = setTimeout(getGithubEvents, queryRate);
+
+var mergePayloadToStore = function(store, payload) {
+    if(store.length == 0) {
+        return payload;
+    }
+    var ar = [];
+    var i = 0;
+    while(i < payload.length && payload[i].id != store[0].id) {
+        ar.push(payload[i]);
+        i++;
+    }
+    return ar;
+};
+
+// The interval to hit Github API.
+var interval = setInterval(function() {
+        getGithubEvents(function(payload) {
+            newData = mergePayloadToStore(store, payload);
+            store = newData.concat(store);
+            if(store.length > 50){
+                store = store.slice(0, 50);
+            }
+            io.emit("github payload", newData); 
+        });
+    }, queryRate);
 
 io.on('connection', function(socket) {
     console.log('a user connected');
-    getGithubEvents(function(payload) {
-        socket.broadcast.emit("github payload", payload);
-    });
 });
 
 
