@@ -18,7 +18,7 @@ var processNewData = function(newData) {
     bubbleGroup.append("circle")
         .attr("r", 20);
     bubbleGroup.append("text")
-        .attr("text", function(d, i) {
+        .text(function(d, i) {
             if(d.commits == 1) {
                 return d.user + ' pushed "' + d.commitMessages[0].message + '" to ' + d.repository;
             } else {
