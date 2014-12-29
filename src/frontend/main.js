@@ -22,7 +22,8 @@ var processNewData = function(newData) {
             if(d.commits == 1) {
                 return d.user + ' pushed "' + d.commitMessages[0].message + '" to ' + d.repository;
             } else {
-                return d.user + ' pushed "' + d.commitMessages[d.commits - 1].message + '" and ' +
+                var lastIndex = d.commitMessages.length - 1; 
+                return d.user + ' pushed "' + d.commitMessages[lastIndex].message + '" and ' +
                     (d.commits - 1) + " other commits to " + d.repository;
             }
         });
