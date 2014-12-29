@@ -5,33 +5,45 @@ var theSvg;
 
 
 var processNewData = function(newData) {
-    var bubbles = theSvg.data(newData);
-    bubbles
-        .enter().append("circle")
-            .attr("cx", Math.random() * 500)
-            .attr("cy", Math.random() * 500)
-            .attr("r", 20);
+    var bubbles = theSvg.selectAll(".bubble").data(newData, function(d, i) {
+        return d.id;    
+    });
+    var bubbleGroup = bubbles
+                        .enter().append("g")
+                            .attr("transform", function(d, i) {
+                                  return "translate(" + Math.random() * 500 + 
+                                  "," + Math.random() * 500 + ")";
+                            })
+                            .attr("class", "bubble");
+    bubbleGroup.append("circle")
+        .attr("r", 20);
+    bubbleGroup.append("text")
+        .attr("text", function(d, i) {
+            if(d.commits == 1) {
+                return d.user + ' pushed "' + d.commitMessages[0].message + '" to ' + d.repository;
+            } else {
+                return d.user + ' pushed "' + d.commitMessages[d.commits - 1].message + '" and ' +
+                    (d.commits - 1) + " other commits to " + d.repository;
+            }
+        });
     bubbles
         .exit().transition()
-            .duration(500)
-            .style("opacity", 1e-6)
+            .duration(5000)
+            .style("opacity", 0)
             .remove();
 };
 
 var initializeSocket = function() {
     socket.on("github payload", function(data) {
-    /*
-    var p = document.createElement("p");
-    p.innerText = JSON.stringify(data);
-    document.body.appendChild(p);
-    */
+        console.log(data);
         processNewData(data);
     });
-
 };
 
 var initialize = function() {
-    theSvg = d3.select("#the-svg");
+    theSvg = d3.select("#the-svg")
+        .attr("width", 800)
+        .attr("height", 600);
     initializeSocket();
     
 };
