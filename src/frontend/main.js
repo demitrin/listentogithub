@@ -43,14 +43,17 @@ var initializeSocket = function() {
     });
 };
 
-var initialize = function() {
+var updateHeight = function() {
     var contentHeight = window.innerHeight - document.getElementById("header").style.height;
     document.getElementById("content").style.height = contentHeight;
     theSvg = d3.select("#the-svg")
         .attr("height", contentHeight)
         .attr("width", window.innerWidth);
+};
+
+var initialize = function() {
+    updateHeight();
     initializeSocket();
-    
 };
 
 $(document).ready(function() {
