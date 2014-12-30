@@ -16,8 +16,10 @@ var processNewData = function(newData) {
                             })
                             .attr("class", "bubble");
     bubbleGroup.append("circle")
-        .attr("r", 20);
+        .attr("r", 20)
+        .attr("fill", "#BAC8D9");
     bubbleGroup.append("text")
+        .attr("fill", "#f2f2f2")
         .text(function(d, i) {
             if(d.commits == 1) {
                 return d.user + ' pushed "' + d.commitMessages[0].message + '" to ' + d.repository;
@@ -29,7 +31,7 @@ var processNewData = function(newData) {
         });
     bubbles
         .exit().transition()
-            .duration(5000)
+            .duration(500)
             .style("opacity", 0)
             .remove();
 };
@@ -42,9 +44,11 @@ var initializeSocket = function() {
 };
 
 var initialize = function() {
+    var contentHeight = window.innerHeight - document.getElementById("header").style.height;
+    document.getElementById("content").style.height = contentHeight;
     theSvg = d3.select("#the-svg")
-        .attr("width", 800)
-        .attr("height", 600);
+        .attr("height", contentHeight)
+        .attr("width", window.innerWidth);
     initializeSocket();
     
 };
