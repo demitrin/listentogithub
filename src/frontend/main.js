@@ -52,6 +52,7 @@ var updateHeight = function() {
 };
 
 var initialize = function() {
+    $(window).resize(updateHeight);
     updateHeight();
     initializeSocket();
 };
