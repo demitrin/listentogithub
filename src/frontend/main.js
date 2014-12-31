@@ -3,7 +3,6 @@ var d3 = require('d3');
 var $ = require('jquery-browserify');
 var theSvg;
 
-
 var processNewData = function(newData) {
     var bubbles = theSvg.selectAll(".bubble").data(newData, function(d, i) {
         return d.id;    
@@ -18,13 +17,24 @@ var processNewData = function(newData) {
     bubbleGroup.append("circle")
         .attr("r", 20)
         .attr("fill", "#BAC8D9");
-    bubbleGroup.append("text")
+
+    // Static text.
+    var bubbleText = bubbleGroup.append("text")
         .attr("fill", "#f2f2f2")
         .attr("x", 0)
         .attr("text-anchor", "middle")
         .text(function(d, i) {
             return d.user + " pushed to " + d.repository;
         });
+    // Fade text out.
+    bubbleText.transition()
+        .delay(1000)
+        .duration(1000)
+        .style("opacity", 0)
+        .remove();
+
+
+    // Hover text.
     bubbleGroup.append("g")
         .attr("class", "hover")
             .attr("display", "none")
@@ -34,26 +44,33 @@ var processNewData = function(newData) {
             .attr("x", 0)
             .attr("fill", "#f2f2f2")
             .text(function(d, i) {
-                if(d.commits == 1) {
+                if(d.commits === 0) {
+                    return "";
+                } else if(d.commits == 1) {
                     return '"' + d.commitMessages[0].message + '"';
                 } else {
                     var lastIndex = d.commitMessages.length - 1; 
                     return '"' + d.commitMessages[lastIndex].message + '" and ' + 
                         d.commits + " other commits.";
-
                 }
             });
+    
+    // Handle mouse events.
     bubbleGroup.on("mouseover", function() {
         d3.select(this).select(".hover").attr("display", "inline");
     });
     bubbleGroup.on("mouseout", function() {
         d3.select(this).select(".hover").attr("display", "none");
     });
+    
+    // Remove stale bubbles
+    /*
     bubbleGroup.transition()
         .delay(5000)
         .duration(1000)
         .style("opacity", 0)
         .remove();
+    */
 };
 
 var initializeSocket = function() {
@@ -80,5 +97,4 @@ var initialize = function() {
 $(document).ready(function() {
     console.log("ready to go");
     initialize();
-
 });
