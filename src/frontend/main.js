@@ -29,11 +29,11 @@ var processNewData = function(newData) {
                     (d.commits - 1) + " other commits to " + d.repository;
             }
         });
-    bubbles
-        .exit().transition()
-            .duration(500)
-            .style("opacity", 0)
-            .remove();
+    bubbleGroup.transition()
+        .delay(5000)
+        .duration(1000)
+        .style("opacity", 0)
+        .remove();
 };
 
 var initializeSocket = function() {
