@@ -2,6 +2,7 @@ var socket = require("socket.io-client")("http://localhost:3000");
 var d3 = require('d3');
 var $ = require('jquery-browserify');
 var theSvg;
+var theState = {};
 
 var processNewData = function(newData) {
     var bubbles = theSvg.selectAll(".bubble").data(newData, function(d, i) {
@@ -10,8 +11,8 @@ var processNewData = function(newData) {
     var bubbleGroup = bubbles
                         .enter().append("g")
                             .attr("transform", function(d, i) {
-                                  return "translate(" + Math.random() * 500 + 
-                                  "," + Math.random() * 500 + ")";
+                                  return "translate(" + Math.random() * theState.width + 
+                                  "," + Math.random() * theState.height + ")";
                             })
                             .attr("class", "bubble");
     bubbleGroup.append("circle")
@@ -82,10 +83,12 @@ var initializeSocket = function() {
 
 var updateHeight = function() {
     var contentHeight = window.innerHeight - document.getElementById("header").style.height;
-    document.getElementById("content").style.height = contentHeight;
+    theState.height = contentHeight;
+    theState.width = window.innerWidth;
+    document.getElementById("content").style.height = theState.height;
     theSvg = d3.select("#the-svg")
-        .attr("height", contentHeight)
-        .attr("width", window.innerWidth);
+        .attr("height", theState.height)
+        .attr("width", theState.width);
 };
 
 var initialize = function() {
