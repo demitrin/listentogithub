@@ -20,15 +20,35 @@ var processNewData = function(newData) {
         .attr("fill", "#BAC8D9");
     bubbleGroup.append("text")
         .attr("fill", "#f2f2f2")
+        .attr("x", 0)
+        .attr("text-anchor", "middle")
         .text(function(d, i) {
-            if(d.commits == 1) {
-                return d.user + ' pushed "' + d.commitMessages[0].message + '" to ' + d.repository;
-            } else {
-                var lastIndex = d.commitMessages.length - 1; 
-                return d.user + ' pushed "' + d.commitMessages[lastIndex].message + '" and ' +
-                    (d.commits - 1) + " other commits to " + d.repository;
-            }
+            return d.user + " pushed to " + d.repository;
         });
+    bubbleGroup.append("g")
+        .attr("class", "hover")
+            .attr("display", "none")
+        .append("text")
+            .attr("y", "2em")
+            .attr("text-anchor", "middle")
+            .attr("x", 0)
+            .attr("fill", "#f2f2f2")
+            .text(function(d, i) {
+                if(d.commits == 1) {
+                    return '"' + d.commitMessages[0].message + '"';
+                } else {
+                    var lastIndex = d.commitMessages.length - 1; 
+                    return '"' + d.commitMessages[lastIndex].message + '" and ' + 
+                        d.commits + " other commits.";
+
+                }
+            });
+    bubbleGroup.on("mouseover", function() {
+        d3.select(this).select(".hover").attr("display", "inline");
+    });
+    bubbleGroup.on("mouseout", function() {
+        d3.select(this).select(".hover").attr("display", "none");
+    });
     bubbleGroup.transition()
         .delay(5000)
         .duration(1000)
