@@ -3,9 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "browserify": "^8.0.2",
     "d3": "^3.5.2",
     "howler": "^1.1.25",
     "jquery-browserify": "^1.8.1",
-    "socket.io-client": "^1.2.1"
+    "socket.io-client": "^1.2.1",
+    "vinyl-transform": "^1.0.0"
   }
 }
