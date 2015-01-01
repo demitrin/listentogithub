@@ -17,12 +17,7 @@ var routes = require('./routes/index');
 
 // Set Github client id and secret, as well as github account to use for
 // oauth,in environmental variables.
-GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID, 
-    GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET, 
-    GITHUB_UNAME = process.env.GITHUB_UNAME,
-    GITHUB_PW = process.env.GITHUB_PW,
-    GITHUB_PAC = process.env.GITHUB_PAC,
-    EVENTS_ENDPOINT = "https://api.github.com/events/";
+GITHUB_PAC = process.env.GITHUB_PAC;
 var client = github.client(GITHUB_PAC);
 var queryRate = (3600 * 1.0 / 5000) * 1000;
 var store = [];
@@ -57,7 +52,7 @@ var getGithubEvents = function(cb) {
 };
 
 var mergePayloadToStore = function(store, payload) {
-    if(store.length == 0) {
+    if(! store.length) {
         return payload;
     }
     var ar = [];
