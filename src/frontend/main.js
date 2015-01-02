@@ -4,6 +4,7 @@ var $ = require('jquery-browserify');
 var theSvg;
 var theState = {};
 
+// Create d3 elements for incoming data.
 var processNewData = function(newData) {
     var bubbles = theSvg.selectAll(".bubble").data(newData, function(d, i) {
         return d.id;    
@@ -20,24 +21,28 @@ var processNewData = function(newData) {
         .attr("fill", "#BAC8D9");
 
     // Static text.
-    var bubbleText = bubbleGroup.append("text")
-        .attr("fill", "#f2f2f2")
-        .attr("x", 0)
-        .attr("text-anchor", "middle")
-        .text(function(d, i) {
-            return d.user + " pushed to " + d.repository;
-        });
+    var bubbleText = bubbleGroup.append("g")
+            .attr("class", "hover");
+    bubbleText
+        .append("text")
+            .attr("fill", "#f2f2f2")
+            .attr("x", 0)
+            .attr("text-anchor", "middle")
+            .text(function(d, i) {
+                return d.user + " pushed to " + d.repository;
+            });
     // Fade text out.
     bubbleText.transition()
         .delay(1000)
         .duration(1000)
         .style("opacity", 0)
-        .remove();
-
+        .each("end", function() {
+            d3.select(this).attr("display", "none");
+        });
 
     // Hover text.
     bubbleGroup.append("g")
-        .attr("class", "hover")
+            .attr("class", "hover")
             .attr("display", "none")
         .append("text")
             .attr("y", "2em")
@@ -58,10 +63,14 @@ var processNewData = function(newData) {
     
     // Handle mouse events.
     bubbleGroup.on("mouseover", function() {
-        d3.select(this).select(".hover").attr("display", "inline");
+        d3.select(this).selectAll(".hover")
+            .attr("display", "inline")
+            .style("opacity", 1);
+        console.log(this);
     });
     bubbleGroup.on("mouseout", function() {
-        d3.select(this).select(".hover").attr("display", "none");
+        d3.select(this).selectAll(".hover").attr("display", "none");
+        console.log(this);
     });
     
     // Remove stale bubbles
@@ -76,7 +85,6 @@ var processNewData = function(newData) {
 
 var initializeSocket = function() {
     socket.on("github payload", function(data) {
-        console.log(data);
         processNewData(data);
     });
 };
