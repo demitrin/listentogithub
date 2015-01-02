@@ -7,7 +7,6 @@ var textWidth = 250;
 
 // Move to front method courtesy of https://gist.github.com/trtg/3922684
 d3.selection.prototype.moveToFront = function() {
-    console.log(this);
     return this.each(function(){
         this.parentNode.appendChild(this);
     });
@@ -146,6 +145,5 @@ function wrap(text, width) {
 }
 
 $(document).ready(function() {
-    console.log("ready to go");
     initialize();
 });
