@@ -3,6 +3,7 @@ var d3 = require('d3');
 var $ = require('jquery-browserify');
 var theSvg;
 var theState = {};
+var textWidth = 250;
 
 // Move to front method courtesy of https://gist.github.com/trtg/3922684
 d3.selection.prototype.moveToFront = function() {
@@ -33,12 +34,17 @@ var processNewData = function(newData) {
             .attr("class", "hover");
     bubbleText
         .append("text")
+            //.attr("fill", "#6889a6")
+            .attr("font-weight", "bold")
             .attr("fill", "#f2f2f2")
             .attr("x", 0)
+            .attr("y", "-1em")
+            .attr("dy", 0)
             .attr("text-anchor", "middle")
             .text(function(d, i) {
                 return d.user + " pushed to " + d.repository;
-            });
+            })
+            .call(wrap, textWidth);
     // Fade text out.
     bubbleText.transition()
         .delay(1000)
@@ -54,7 +60,9 @@ var processNewData = function(newData) {
             .attr("display", "none")
         .append("text")
             .attr("y", "2em")
+            .attr("dy", 0)
             .attr("text-anchor", "middle")
+            .attr("font-weight", "bold")
             .attr("x", 0)
             .attr("fill", "#f2f2f2")
             .text(function(d, i) {
@@ -67,7 +75,8 @@ var processNewData = function(newData) {
                     return '"' + d.commitMessages[lastIndex].message + '" and ' + 
                         d.commits + " other commits.";
                 }
-            });
+            })
+            .call(wrap, textWidth);
     
     // Handle mouse events.
     bubbleGroup.on("mouseover", function(d, i) {
@@ -111,6 +120,30 @@ var initialize = function() {
     updateHeight();
     initializeSocket();
 };
+
+function wrap(text, width) {
+    text.each(function() {
+        var text = d3.select(this),
+            words = text.text().split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.1, // ems
+            y = text.attr("y"),
+            dy = parseFloat(text.attr("dy")),
+            tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+        while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (tspan.node().getComputedTextLength() > width) {
+                line.pop();
+                tspan.text(line.join(" "));
+                line = [word];
+                tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+            }
+        }
+    });
+}
 
 $(document).ready(function() {
     console.log("ready to go");
