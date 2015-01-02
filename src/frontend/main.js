@@ -4,9 +4,17 @@ var $ = require('jquery-browserify');
 var theSvg;
 var theState = {};
 
+// Move to front method courtesy of https://gist.github.com/trtg/3922684
+d3.selection.prototype.moveToFront = function() {
+    console.log(this);
+    return this.each(function(){
+        this.parentNode.appendChild(this);
+    });
+};
+
 // Create d3 elements for incoming data.
 var processNewData = function(newData) {
-    var bubbles = theSvg.select(".content").selectAll(".bubble").data(newData, function(d, i) {
+    var bubbles = theSvg.selectAll(".bubble").data(newData, function(d, i) {
         return d.id;    
     });
     var bubbleGroup = bubbles
@@ -63,10 +71,10 @@ var processNewData = function(newData) {
     
     // Handle mouse events.
     bubbleGroup.on("mouseover", function(d, i) {
-        d3.select(this).selectAll(".hover")
+        var thisSelection = d3.select(this).moveToFront();
+        thisSelection.selectAll(".hover")
             .attr("display", "inline")
             .style("opacity", 1);
-        //d3.select(".overlay").data([d]).enter()
     });
     bubbleGroup.on("mouseout", function() {
         d3.select(this).selectAll(".hover").attr("display", "none");
@@ -101,10 +109,6 @@ var updateHeight = function() {
 var initialize = function() {
     $(window).resize(updateHeight);
     updateHeight();
-    theSvg.append("g")
-        .attr("class", "content");
-    theSvg.append("g")
-        .attr("class", "overlay");
     initializeSocket();
 };
 
