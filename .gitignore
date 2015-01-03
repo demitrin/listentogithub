@@ -1,3 +1,5 @@
 node_modules/
 setenvs.sh
 src/listentogithub/public/
+.idea
+npm-debug.log
