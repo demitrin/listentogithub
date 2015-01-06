@@ -42,27 +42,28 @@ function getGithubEvents(cb) {
     });
 }
 
-function mergePayloadToStore(store, payload) {
+function filterPayload(store, payload) {
     if (!store.length) {
         return payload;
     }
-    var ar = [];
-    var i = 0;
-    while (i < payload.length && payload[i].id != store[0].id) {
-        ar.push(payload[i]);
-        i++;
+    for (var i = 0; i < payload.length; i++){
+        if (payload[i].id == store[0].id) {
+            break
+        }
     }
-    return ar;
+    return payload.slice(0, i)
 }
 
 // The interval to hit Github API.
 setInterval(function getGithubEventsInteralCb() {
     getGithubEvents(function getGithubEventsCb(payload) {
-        var newData = mergePayloadToStore(store, payload);
+        var newData = filterPayload(store, payload);
         store = newData.concat(store);
-        if (store.length > 50) {
-            store = store.slice(0, 50);
-        }
+        var now = new Date();
+        var tenSecondsAgo = new Date(now.getTime() - 10 * 1000);
+        store.filter(function filterOldEvents(event) {
+            return new Date(event.time) > tenSecondsAgo;
+        });
     });
 }, queryRate);
 
