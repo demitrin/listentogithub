@@ -7,7 +7,7 @@ var client = github.client(GITHUB_PAC);
 var queryRate = (3600. / 5000) * 1000;
 var store = [];
 
-var getGithubEventRet = function(el) {
+function getGithubEventRet(el) {
     return {
         user: el.actor.login,
         repository: el.repo.name,
@@ -24,13 +24,13 @@ var getGithubEventRet = function(el) {
         })()
     };
 
-};
+}
 
-var getGithubEvents = function(cb) {
+function getGithubEvents(cb) {
     /*
      * Callback function should do something with the payload.
      */
-    client.get('/events', {}, function(err, status, body, headers) {
+    client.get('/events', {}, function getEventCb(err, status, body, headers) {
         var out = body.filter(function filterCb(el, i, ar) {
             return el.type == "PushEvent";
         }).map(function mapCb(el, i, ar) {
@@ -40,9 +40,9 @@ var getGithubEvents = function(cb) {
             cb(out);
         }
     });
-};
+}
 
-var mergePayloadToStore = function(store, payload) {
+function mergePayloadToStore(store, payload) {
     if (!store.length) {
         return payload;
     }
@@ -53,11 +53,11 @@ var mergePayloadToStore = function(store, payload) {
         i++;
     }
     return ar;
-};
+}
 
 // The interval to hit Github API.
-setInterval(function() {
-    getGithubEvents(function(payload) {
+setInterval(function getGithubEventsInteralCb() {
+    getGithubEvents(function getGithubEventsCb(payload) {
         var newData = mergePayloadToStore(store, payload);
         store = newData.concat(store);
         if (store.length > 50) {
@@ -66,9 +66,9 @@ setInterval(function() {
     });
 }, queryRate);
 
-var getStore = function() {
+function getStore() {
     return store;
-};
+}
 
 module.exports = {
     getStore: getStore,
