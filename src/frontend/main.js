@@ -4,6 +4,7 @@ var $ = require('jquery-browserify');
 var theSvg;
 var theState = {};
 var textWidth = 250;
+var queryRate = 720.0;
 
 // Move to front method courtesy of https://gist.github.com/trtg/3922684
 d3.selection.prototype.moveToFront = function() {
@@ -17,13 +18,21 @@ var processNewData = function(newData) {
     var bubbles = theSvg.selectAll(".bubble").data(newData, function(d, i) {
         return d.id;    
     });
+    var numNew = bubbles.enter().size();
     var bubbleGroup = bubbles
                         .enter().append("g")
                             .attr("transform", function(d, i) {
                                   return "translate(" + Math.random() * theState.width + 
                                   "," + Math.random() * theState.height + ")";
                             })
-                            .attr("class", "bubble");
+                            .attr("class", "bubble")
+                            .style("display", "none")
+                            .each(function(d, i) {
+                                var self = this;
+                                setTimeout(function() {
+                                    d3.select(self).style("display", "inline");
+                                }, (queryRate / numNew) * i);
+                            });
     bubbleGroup.append("circle")
         .attr("r", 20)
         .attr("fill", "#BAC8D9");
