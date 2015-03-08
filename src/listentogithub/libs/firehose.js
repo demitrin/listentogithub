@@ -48,10 +48,10 @@ function filterPayload(store, payload) {
     }
     for (var i = 0; i < payload.length; i++){
         if (payload[i].id == store[0].id) {
-            break
+            break;
         }
     }
-    return payload.slice(0, i)
+    return payload.slice(0, i);
 }
 
 // The interval to hit Github API.
